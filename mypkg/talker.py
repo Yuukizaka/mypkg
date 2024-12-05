@@ -1,21 +1,24 @@
 import rclpy
 from rclpy.node import Node
-from person_msgs.srv import Query
+from std_msgs.msg import Int16
 
-rclpy.init()
-node = Node("talker")
+### ヘッダの下にTalkerというクラスを作成 ###
+class Talker(Node):  # Nodeというクラスの機能を受け継いだクラスになる
+    def __init__(self):  # オブジェクトができたときに呼ばれる
+        super().__init__("takler")  # Nodeのオブジェクトとしての初期化
+        self.pub = self.create_publisher(Int16, "countup", 10)
+        self.create_timer(0.5, self.cb)
+        self.n = 0
 
-
-
-def cb(request, response):
-    if request.name == "石坂勇樹":
-        response.age = 19
-    else:
-        response.age = 255
-
-    return response
+    def cb(self):  # コールバックのメソッド
+        msg = Int16()
+        msg.data = self.n  # 属性には必ずselfをつける
+        self.pub.publish(msg)
+        self.n += 1
 
 
 def main():
-    srv = node.create_service(Query, "query", cb)  # サービスの作成
-    rclpy.spin(node)
+    rclpy.init()
+    node = Talker()  # Talkerのオブジェクトを作成
+    rclpy.spin(node)  # ↑あとは__init__が呼ばれてすべてが動き出す
+
