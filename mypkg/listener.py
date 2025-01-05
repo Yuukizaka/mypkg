@@ -1,25 +1,23 @@
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Int16
+from std_msgs.msg import Float32
 
-class Talker(Node):  # "Listener" ではなく "Talker" と命名
-    def __init__(self):  # コンストラクタ名を修正
-        super().__init__("talker")  # ノード名を指定
-        self.pub = self.create_publisher(Int16, "countup", 10)
-        self.create_timer(0.5, self.cb)
-        self.n = 0
+class Listener(Node):  # クラス名を "Listener" に修正
+    def __init__(self):
+        super().__init__("listener")  # ノード名を "listener" として初期化
+        self.sub = self.create_subscription(
+            Float32, "sensor_data", self.callback, 10)  # トピック "sensor_data" を購読
+        self.get_logger().info("Sensor Listener Node is running.")
 
-    def cb(self):  # コールバックメソッド
-        msg = Int16()
-        msg.data = self.n
-        self.pub.publish(msg)
-        self.get_logger().info(f"listener: {msg.data}")
-        self.n += 1
+    def callback(self, msg):  # コールバックメソッド
+        # トピックから受信したデータを表示
+        self.get_logger().info(f"Received temperature: {msg.data:.2f} °C")
 
 def main():
     rclpy.init()
-    node = Talker()
+    node = Listener()
     rclpy.spin(node)
-    node.destroy_node()  # ノードのクリーンアップ
+    node.destroy_node()
     rclpy.shutdown()
+
 
