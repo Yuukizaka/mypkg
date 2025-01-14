@@ -1,6 +1,12 @@
+#!/usr/bin/python3
+# SPDX-FileCopyrightText: 2024 Yuuki Ishizaka
+# SPDX-License-Identifier: BSD-3-Clausea
+
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
+
+
 
 class Listener(Node):  # クラス名を "Listener" に修正
     def __init__(self):
@@ -12,7 +18,6 @@ class Listener(Node):  # クラス名を "Listener" に修正
     def callback(self, msg):  # コールバックメソッド
         # トピックから受信したデータを表示
         self.get_logger().info(f"Received temperature: {msg.data:.2f} °C")
-
 def main():
     rclpy.init()
     node = Listener()

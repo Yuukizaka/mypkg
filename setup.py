@@ -25,10 +25,11 @@ setup(
     license='BSD-3-Clause',
     tests_require=['pytest', 'ament_pytest'],  # 追加のテスト依存関係
     entry_points={
-        'console_scripts': [
-            'talker = mypkg.talker:main',
-            'listener = mypkg.listener:main',
-        ],
-    },
+    'console_scripts': [
+        'talker = mypkg.talker:main',
+        'listener = mypkg.listener:main',
+    ],
+},
+
 )
 

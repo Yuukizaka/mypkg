@@ -1,7 +1,13 @@
+#!/usr/bin/python3
+# SPDX-FileCopyrightText: 2024 Yuuki Ishizaka
+# SPDX-License-Identifier: BSD-3-Clausea
+
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
 import random
+
+
 
 class Talker(Node):  # Nodeクラスを継承したTalkerクラス
     def __init__(self):  # 初期化メソッド
