@@ -1,11 +1,11 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2024 Yuuki Ishizaka
-# SPDX-License-Identifier: BSD-3-Clausea
+# SPDX-License-Identifier: BSD-3-Clause
 
 import rclpy
 from rclpy.node import Node
 from std_msgs.msg import Float32
-from decimal import Decimal, ROUND_HALF_UP  # Decimalをインポート
+from decimal import Decimal, ROUND_HALF_UP
 
 
 class Listener(Node):
@@ -16,7 +16,6 @@ class Listener(Node):
         self.get_logger().info("Sensor Listener Node is running.")
 
     def callback(self, msg):
-        # Decimalを使って小数点以下2桁に丸める
         formatted_data = Decimal(msg.data).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         self.get_logger().info(f"Received temperature: {formatted_data} °C")
 
@@ -27,4 +26,7 @@ def main():
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
+
+if __name__ == "__main__":
+    main()
 
