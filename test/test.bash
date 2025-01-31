@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/bash
 # SPDX-FileCopyrightText: 2024 Yuuki Ishizaka
 # SPDX-License-Identifier: BSD-3-Clausea
 
