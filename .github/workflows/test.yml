@@ -8,7 +8,7 @@ on: [push, pull_request]
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04  # Ubuntu 22.04 に固定
 
     steps:
       - name: Checkout repository
@@ -22,6 +22,19 @@ jobs:
           sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu jammy main" > /etc/apt/sources.list.d/ros2.list'
           sudo apt update
           sudo apt install -y ros-humble-ros-base python3-colcon-common-extensions
+          ls -l /opt/ros/humble/  # インストール確認
+
+      - name: Verify ROS 2 Installation
+        run: |
+          if [ -f /opt/ros/humble/setup.bash ]; then
+            echo "ROS 2 Humble is installed."
+          else
+            echo "Error: ROS 2 Humble is missing!" >&2
+            exit 1
+          fi
+
+      - name: Check Installed ROS 2 Packages
+        run: dpkg -l | grep ros-humble
 
       - name: Create ROS 2 workspace and move package
         run: |
@@ -37,8 +50,8 @@ jobs:
         run: |
           source /opt/ros/humble/setup.bash
           source ~/ros2_ws/install/setup.bash
-          ros2 pkg list | grep mypkg  # ここでデバッグ
+          ros2 pkg list | grep mypkg
           chmod +x ~/ros2_ws/src/test/test.bash
           ~/ros2_ws/src/test/test.bash
-
+
 
