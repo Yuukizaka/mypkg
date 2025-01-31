@@ -1,31 +1,29 @@
+#!/usr/bin/python3
+# SPDX-FileCopyrightText: 2024 Yuuki Ishizaka
+# SPDX-License-Identifier: BSD-3-Clausea
 
+name: ROS2 CI
 
-name: ROS 2 CI
-
-on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
+on: [push, pull_request]
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-      
-      - name: Set up ROS 2 Humble
+
+      - name: Setup ROS 2 Humble
         run: |
-          sudo apt update && sudo apt install -y python3-colcon-common-extensions
-          source /opt/ros/humble/setup.bash
-      
-      - name: Build ROS 2 package
+          sudo apt update
+          sudo apt install -y curl
+          sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | sudo apt-key add -
+          sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2.list'
+          sudo apt update
+          sudo apt install -y ros-humble-ros-base python3-colcon-common-extensions
+
+      - name: Build and Test
         run: |
-          colcon build --symlink-install
-          source install/setup.bash
-      
-      - name: Run tests
-        run: ./test.bash
+          chmod +x test/test.bash
+          ./test/test.bash

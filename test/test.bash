@@ -1,13 +1,25 @@
-#!/bin/bash
+#!/usr/bin/python3
+# SPDX-FileCopyrightText: 2024 Yuuki Ishizaka
+# SPDX-License-Identifier: BSD-3-Clausea
 
-dir=~
-[ "$1" != "" ] && dir="$1"  # 引数があったら、そちらをホームに変える。
+WS_DIR=~/ros2_ws
+LOG_FILE="/tmp/mypkg.log"
 
-cd $dir/ros2_ws
+# Build the package
+cd $WS_DIR
+source /opt/ros/humble/setup.bash
 colcon build
-source $dir/.bashrc
-timeout 10 ros2 launch mypkg talk_listen.launch.py | tee - /tmp/mypkg.log
+source $WS_DIR/install/setup.bash
 
-cat /tmp/mypkg.log |
-grep 'listen: 10'
+# Run test
+echo "Running talk_listen.launch.py..."
+timeout 10 ros2 launch mypkg talk_listen.launch.py | tee -a $LOG_FILE
 
+# Check if listener received sensor data
+if grep -q "Received temperature" "$LOG_FILE"; then
+    echo "Test passed!"
+    exit 0
+else
+    echo "Test failed: 'Received temperature' not found in logs."
+    exit 1
+fi
