@@ -1,4 +1,6 @@
-name: ROS 2 Package Test
+
+
+name: ROS 2 CI
 
 on:
   push:
@@ -10,34 +12,20 @@ on:
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-22.04  # Ubuntuのバージョンを明示的に指定
-
+    runs-on: ubuntu-22.04
     steps:
-    # リポジトリのクローン
-    - name: Checkout repository
-      uses: actions/checkout@v3
-
-    # ROS 2 環境のセットアップ
-    - name: Setup ROS 2 Humble
-      run: |
-        sudo apt update && sudo apt install -y curl gnupg lsb-release
-        curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
-        sudo sh -c 'echo "deb [arch=$(dpkg --print-architecture)] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list'
-        sudo apt update
-        sudo apt install -y ros-humble-desktop python3-colcon-common-extensions
-        source /opt/ros/humble/setup.bash
-
-    # ROS 2 ワークスペースを構築
-    - name: Build workspace
-      run: |
-        source /opt/ros/humble/setup.bash
-        colcon build
-
-    # テストの実行
-    - name: Run tests
-      run: |
-        source /opt/ros/humble/setup.bash
-        colcon test
-        colcon test-result --verbose
-
-
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up ROS 2 Humble
+        run: |
+          sudo apt update && sudo apt install -y python3-colcon-common-extensions
+          source /opt/ros/humble/setup.bash
+      
+      - name: Build ROS 2 package
+        run: |
+          colcon build --symlink-install
+          source install/setup.bash
+      
+      - name: Run tests
+        run: ./test.bash
