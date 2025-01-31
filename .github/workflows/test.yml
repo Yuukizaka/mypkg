@@ -1,6 +1,7 @@
 #!/usr/bin/bash
 # SPDX-FileCopyrightText: 2024 Yuuki Ishizaka
-# SPDX-License-Identifier: BSD-3-Clausea
+# SPDX-License-Identifier: BSD-3-Claus
+
 
 name: ROS2 CI
 
@@ -55,5 +56,4 @@ jobs:
           ros2 pkg list | grep mypkg
           chmod +x ~/ros2_ws/src/test/test.bash
           ~/ros2_ws/src/test/test.bash
-
 
