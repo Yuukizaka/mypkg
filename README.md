@@ -12,7 +12,7 @@ https://github.com/Yuukizaka/mypkg.git
 そしてタブを2つ用意します。
 そのうちの一つにtalker.pyを、もう一つにlistener.pyをを立ち上げてください。
 
-##実行方法
+## 実行方法
 
 talker.pyの場合  
 ```
@@ -23,7 +23,7 @@ listener.pyの場合
 ros2 topic echo /sensor_data
 ```
 
-##実行結果
+## 実行結果
 
 talker.pyを実行した場合
 ```
