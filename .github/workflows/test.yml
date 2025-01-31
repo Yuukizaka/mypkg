@@ -20,29 +20,43 @@ jobs:
       - name: Setup ROS 2 Humble
         run: |
           sudo apt update
-          sudo apt install -y curl
-          sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | sudo apt-key add -
-          echo "deb http://packages.ros.org/ros2/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
+          sudo apt install -y curl gnupg2 lsb-release
+          sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | sudo tee /usr/share/keyrings/ros-archive-keyring.gpg > /dev/null
+          echo "deb [signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
           sudo apt update
           sudo apt install -y ros-humble-ros-base python3-colcon-common-extensions
-          ls -l /opt/ros/humble/  # インストール確認
+          if [ -d /opt/ros/humble ]; then
+            echo "ROS 2 Humble installed successfully."
+          else
+            echo "Error: ROS 2 Humble installation failed!" >&2
+            exit 1
+          fi
 
-      - name: Verify ROS 2 Installation
+      - name: Check ROS 2 Installation
         run: |
-          if [ -f /opt/ros/humble/setup.bash ]; then
+          if [ -d /opt/ros/humble ]; then
             echo "ROS 2 Humble is installed."
+            ls -l /opt/ros/humble/
           else
             echo "Error: ROS 2 Humble is missing!" >&2
             exit 1
           fi
 
       - name: Check Installed ROS 2 Packages
-        run: dpkg -l | grep ros-humble
+        run: |
+          dpkg -l | grep ros-humble || echo "ROS 2 packages not installed!"
+
+      - name: Setup Environment Variables
+        run: |
+          echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+          echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
+          echo "export ROS_PACKAGE_PATH=~/ros2_ws/src:$ROS_PACKAGE_PATH" >> ~/.bashrc
+          source ~/.bashrc
 
       - name: Create ROS 2 workspace and move package
         run: |
           mkdir -p ~/ros2_ws/src
-          mv $(ls -A | grep -v .github) ~/ros2_ws/src/  # .githubフォルダを除く
+          mv $(ls -A | grep -v .github) ~/ros2_ws/src/
           cd ~/ros2_ws
           source /opt/ros/humble/setup.bash
           colcon build
@@ -51,8 +65,7 @@ jobs:
 
       - name: Build and Test
         run: |
-          source /opt/ros/humble/setup.bash
-          source ~/ros2_ws/install/setup.bash
+          source ~/.bashrc
           ros2 pkg list | grep mypkg
           chmod +x ~/ros2_ws/src/test/test.bash
           ~/ros2_ws/src/test/test.bash
