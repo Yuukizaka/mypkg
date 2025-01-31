@@ -8,7 +8,7 @@ on: [push, pull_request]
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-22.04  # 環境をUbuntu 22.04に固定
 
     steps:
       - name: Checkout repository
@@ -19,11 +19,21 @@ jobs:
           sudo apt update
           sudo apt install -y curl
           sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | sudo apt-key add -
-          sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2.list'
+          sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu jammy main" > /etc/apt/sources.list.d/ros2.list'
           sudo apt update
           sudo apt install -y ros-humble-ros-base python3-colcon-common-extensions
 
+      - name: Create ROS 2 workspace and move package
+        run: |
+          mkdir -p ~/ros2_ws/src
+          mv * ~/ros2_ws/src/  # リポジトリの内容をsrcに移動
+          cd ~/ros2_ws
+          source /opt/ros/humble/setup.bash
+          colcon build
+          source ~/ros2_ws/install/setup.bash
+
       - name: Build and Test
         run: |
-          chmod +x test/test.bash
-          ./test/test.bash
+          chmod +x ~/ros2_ws/src/test/test.bash
+          ~/ros2_ws/src/test/test.bash
+
