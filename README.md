@@ -11,7 +11,9 @@ https://github.com/Yuukizaka/mypkg.git
 ```
 そしてタブを2つ用意します。
 そのうちの一つにtalker.pyを、もう一つにlistener.pyをを立ち上げてください。
+
 ##実行方法
+
 talker.pyの場合  
 ```
 ros2 run mypkg talker talker.py
@@ -20,7 +22,9 @@ listener.pyの場合
 ```
 ros2 topic echo /sensor_data
 ```
+
 ##実行結果
+
 talker.pyを実行した場合
 ```
 [INFO] [1737308013.486313086] [talker]: Sensor Publisher Node is running.
@@ -59,6 +63,7 @@ data: 25.53400230407715
 ---
 data: 28.87436294555664
 ```
+
 ## 開発環境
 * Ubuntu 22.04 LTS
 * ROS 2 Humble Hawksb
