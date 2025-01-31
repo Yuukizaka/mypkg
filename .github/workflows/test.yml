@@ -8,7 +8,7 @@ on: [push, pull_request]
 
 jobs:
   build-and-test:
-    runs-on: ubuntu-22.04  # 環境をUbuntu 22.04に固定
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout repository
@@ -26,14 +26,19 @@ jobs:
       - name: Create ROS 2 workspace and move package
         run: |
           mkdir -p ~/ros2_ws/src
-          mv * ~/ros2_ws/src/  # リポジトリの内容をsrcに移動
+          mv * ~/ros2_ws/src/
           cd ~/ros2_ws
           source /opt/ros/humble/setup.bash
           colcon build
+          echo "source ~/ros2_ws/install/setup.bash" >> ~/.bashrc
           source ~/ros2_ws/install/setup.bash
 
       - name: Build and Test
         run: |
+          source /opt/ros/humble/setup.bash
+          source ~/ros2_ws/install/setup.bash
+          ros2 pkg list | grep mypkg  # ここでデバッグ
           chmod +x ~/ros2_ws/src/test/test.bash
           ~/ros2_ws/src/test/test.bash
+
 
