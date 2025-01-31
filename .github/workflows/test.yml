@@ -4,7 +4,9 @@
 
 name: ROS2 CI
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
 
 jobs:
   build-and-test:
@@ -19,7 +21,7 @@ jobs:
           sudo apt update
           sudo apt install -y curl
           sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key | sudo apt-key add -
-          sudo sh -c 'echo "deb http://packages.ros.org/ros2/ubuntu jammy main" > /etc/apt/sources.list.d/ros2.list'
+          echo "deb http://packages.ros.org/ros2/ubuntu jammy main" | sudo tee /etc/apt/sources.list.d/ros2.list > /dev/null
           sudo apt update
           sudo apt install -y ros-humble-ros-base python3-colcon-common-extensions
           ls -l /opt/ros/humble/  # インストール確認
@@ -39,7 +41,7 @@ jobs:
       - name: Create ROS 2 workspace and move package
         run: |
           mkdir -p ~/ros2_ws/src
-          mv * ~/ros2_ws/src/
+          mv $(ls -A | grep -v .github) ~/ros2_ws/src/  # .githubフォルダを除く
           cd ~/ros2_ws
           source /opt/ros/humble/setup.bash
           colcon build
@@ -53,5 +55,5 @@ jobs:
           ros2 pkg list | grep mypkg
           chmod +x ~/ros2_ws/src/test/test.bash
           ~/ros2_ws/src/test/test.bash
-
+
 
